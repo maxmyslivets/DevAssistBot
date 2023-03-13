@@ -1,0 +1,3 @@
+openai~=0.27.2
+pony~=0.7.16
+pytelegrambotapi~=4.10.0
