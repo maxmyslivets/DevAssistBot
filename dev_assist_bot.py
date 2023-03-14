@@ -42,12 +42,16 @@ class DevAssistBot:
                     messages.extend(init_messages)
 
                 messages.append({"role": "user", "content": message.text})
-                response = AI.chat(messages)
-                messages.append({"role": "assistant", "content": response})
+                response, new_messages = AI.chat(messages)
 
-                DB.set_messages(chat_id=message.chat.id, message_thread_id=message.message_thread_id, messages=messages)
+                DB.set_messages(chat_id=message.chat.id, message_thread_id=message.message_thread_id,
+                                messages=new_messages)
 
-            self.bot.send_message(chat_id=message.chat.id, message_thread_id=message.message_thread_id, text=response)
+            max_message_length = 4096  # максимальная длина сообщения telegram
+
+            for i in range(0, len(response), max_message_length):
+                chunk = response[i:i + max_message_length]
+                self.bot.send_message(chat_id=message.chat.id, message_thread_id=message.message_thread_id, text=chunk)
 
     def run_polling(self):
 
